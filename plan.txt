@@ -1,0 +1,4 @@
+
+Language Prototype Requirement:
+    Auto Completion [ Words / Grammar(?) ]
+    Highlighting Information
