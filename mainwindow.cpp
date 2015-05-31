@@ -167,13 +167,22 @@ void MainWindow::search()
 	auto *editor = this->currentEditor();
 	if(editor == nullptr)
 		return;
-	editor->search(this->mSearchField->text());
+	if(this->mSearchField->text().length() > 0)
+		editor->search(this->mSearchField->text());
 }
 
 void MainWindow::searchWeb()
 {
-	this->mDockBrowser->setVisible(true);
-	this->mBrowser->search(this->mSearchField->text());
+	QString text = this->mSearchField->text();
+	if(text.length() > 0)
+	{
+		this->mDockBrowser->setVisible(true);
+		if(QUrl(text).scheme().isEmpty()) {
+			this->mBrowser->search(this->mSearchField->text());
+		} else {
+			this->mBrowser->navigateTo(QUrl(text));
+		}
+	}
 }
 
 
