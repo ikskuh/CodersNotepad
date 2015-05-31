@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/appbar.clipboard.paste.svg</file>
+        <file>Icons/appbar.close.svg</file>
+        <file>Icons/appbar.folder.open.svg</file>
+        <file>Icons/appbar.globe.wire.svg</file>
+        <file>Icons/appbar.page.copy.svg</file>
+        <file>Icons/appbar.page.new.svg</file>
+        <file>Icons/appbar.page.search.svg</file>
+        <file>Icons/appbar.save.svg</file>
+        <file>Icons/appbar.settings.svg</file>
+        <file>Icons/appbar.redo.svg</file>
+        <file>Icons/appbar.undo.svg</file>
+        <file>Icons/appbar.arrow.right.svg</file>
+        <file>Icons/appbar.navigate.next.svg</file>
+        <file>Icons/appbar.navigate.previous.svg</file>
+        <file>Icons/appbar.refresh.svg</file>
+        <file>Icons/appbar.console.svg</file>
+    </qresource>
+</RCC>

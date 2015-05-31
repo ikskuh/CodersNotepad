@@ -11,10 +11,12 @@
 #include <QComboBox>
 #include <QTreeWidget>
 #include <QLineEdit>
-
-//#include <QtWebKitWidgets/QWebView>
+#include <QMessageBox>
+#include <QShortcut>
 
 #include "Languages/simplelanguage.h"
+
+#include "webbrowser.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->mMdi->setTabsClosable(true);
     this->setCentralWidget(this->mMdi);
 
-    this->mLanguage = new SimpleLanguage();
+	this->mLanguage = new SimpleLanguage();
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +62,11 @@ CodeEditor *MainWindow::newEditor()
     window->show();
 
     return editor;
+}
+
+void MainWindow::emptyAction()
+{
+	QMessageBox(QMessageBox::Information, this->windowTitle(), "Not implemented yet").exec();
 }
 
 void MainWindow::newFile()
@@ -118,12 +125,6 @@ void MainWindow::saveFileAs()
     editor->save(fileName);
 }
 
-void MainWindow::emptyAction()
-{
-
-}
-
-
 void MainWindow::copy()
 {
     auto *editor = this->currentEditor();
@@ -161,12 +162,23 @@ void MainWindow::redo()
     editor->redo();
 }
 
+void MainWindow::search()
+{
+	QMessageBox(QMessageBox::Information, this->windowTitle(), "'Search' not implemented yet").exec();
+}
+
+void MainWindow::searchWeb()
+{
+	this->mDockBrowser->setVisible(true);
+	this->mBrowser->search(this->mSearchField->text());
+}
+
 void MainWindow::initPanels()
 {
     // Code Jumper
     {
-        auto *codePanel  = new QDockWidget();
-        codePanel->setWindowTitle("Code Jumper");
+		this->mDockJumper  = new QDockWidget();
+		this->mDockJumper->setWindowTitle("Code Jumper");
 
         auto *tree = new QTreeWidget();
         {
@@ -178,49 +190,48 @@ void MainWindow::initPanels()
             root->setText(0, "file-b.c");
             tree->addTopLevelItem(root);
         }
-        codePanel->setWidget(tree);
+		this->mDockJumper->setWidget(tree);
 
-        this->addDockWidget(Qt::LeftDockWidgetArea, codePanel);
+		this->addDockWidget(Qt::LeftDockWidgetArea, this->mDockJumper);
     }
 
     // Output
     {
-        auto *outputPanel = new QDockWidget();
-        outputPanel->setWindowTitle("Output");
+		this->mDockOutput = new QDockWidget();
+		this->mDockOutput->setWindowTitle("Output");
+		this->mDockOutput->setWindowIcon(QIcon("://Icons/appbar.console.svg"));
 
         auto *output = new QTextEdit();
         output->setReadOnly(true);
         output->setText(">cat data.dat");
 
-        outputPanel->setWidget(output);
+		this->mDockOutput->setWidget(output);
 
-        this->addDockWidget(Qt::BottomDockWidgetArea, outputPanel);
+		this->addDockWidget(Qt::BottomDockWidgetArea, this->mDockOutput);
     }
 
     // Browser
-    /*
+	//*
     {
-        auto *browserPanel = new QDockWidget();
-        browserPanel->setWindowTitle("Browser");
-
-        auto *view = new QWebView();
-        view->load(QUrl("http://mq32.de"));
-        browserPanel->setWidget(view);
-
-        this->addDockWidget(Qt::RightDockWidgetArea, browserPanel);
+		this->mDockBrowser = new QDockWidget();
+		this->mDockBrowser->setWindowTitle("Browser");
+		this->mDockBrowser->setWidget(this->mBrowser = new WebBrowser());
+		this->mDockBrowser->setVisible(false);
+		this->addDockWidget(Qt::RightDockWidgetArea, this->mDockBrowser);
     }
     //*/
 }
 
-template<typename T, typename R, typename... Args>
+template<typename T, typename R>
 QAction *MainWindow::menuItem(
-        QMenu *menu,
+		T *menu,
         const QString &title,
         const QString &hotkey,
-        R(T::*fn)(Args...))
+		const QIcon &icon,
+		const R &fn)
 {
-    QAction *a = menu->addAction(title);
-    if(hotkey.isNull() == false)
+	QAction *a = menu->addAction(icon, title);
+	if(hotkey.isEmpty() == false)
         a->setShortcut(QKeySequence(hotkey));
     if(fn != nullptr)
         connect(a, &QAction::triggered, this, fn);
@@ -235,31 +246,34 @@ void MainWindow::initMenuBar()
     connect(
         fileMenu, &QMenu::aboutToShow,
         this, &MainWindow::updateFileMenu);
-    menuItem(fileMenu, "New", "Ctrl+N", &MainWindow::newFile);
-    menuItem(fileMenu, "Open...", "Ctrl+O", &MainWindow::loadFile);
+	menuItem(fileMenu, "New", "Ctrl+N", QIcon("://Icons/appbar.page.new.svg"), &MainWindow::newFile);
+	menuItem(fileMenu, "Open...", "Ctrl+O", QIcon("://Icons/appbar.folder.open.svg"), &MainWindow::loadFile);
     fileMenu->addSeparator();
-    this->aSave = menuItem(fileMenu, "Save", "Ctrl+S", &MainWindow::saveFile);
-    this->aSaveAs = menuItem(fileMenu, "Save As...", "Ctrl+Shift+S", &MainWindow::saveFileAs);
-    this->aClose = menuItem(fileMenu, "Close", "", &MainWindow::closeFile);
+	this->aSave = menuItem(fileMenu, "Save", "Ctrl+S", QIcon("://Icons/appbar.save.svg"), &MainWindow::saveFile);
+	this->aSaveAs = menuItem(fileMenu, "Save As...", "Ctrl+Shift+S", QIcon(), &MainWindow::saveFileAs);
+	this->aClose = menuItem(fileMenu, "Close", "", QIcon("://Icons/appbar.close.svg"), &MainWindow::closeFile);
     fileMenu->addSeparator();
-    menuItem(fileMenu, "Quit", "Alt+F4", &QWidget::close);
+	menuItem(fileMenu, "Quit", "Alt+F4", QIcon(), &QWidget::close);
 
     QMenu *editMenu = menu->addMenu("&Edit");
     connect(
         editMenu, &QMenu::aboutToShow,
         this, &MainWindow::updateEditMenu);
-    this->aUndo = menuItem(editMenu, "Undo", "Ctrl+Z", &MainWindow::undo);
-    this->aRedo = menuItem(editMenu, "Redo", "Ctrl+Y", &MainWindow::redo);
+	this->aUndo = menuItem(editMenu, "Undo", "Ctrl+Z", QIcon("://Icons/appbar.undo.svg"), &MainWindow::undo);
+	this->aRedo = menuItem(editMenu, "Redo", "Ctrl+Y", QIcon("://Icons/appbar.redo.svg"), &MainWindow::redo);
     editMenu->addSeparator();
-    this->aCut = menuItem(editMenu, "Cut", "Ctrl+X", &MainWindow::cut);
-    this->aCopy = menuItem(editMenu, "Copy", "Ctrl+C", &MainWindow::copy);
-    this->aPaste = menuItem(editMenu, "Paste", "Ctrl+V", &MainWindow::paste);
+	this->aCut = menuItem(editMenu, "Cut", "Ctrl+X", QIcon(), &MainWindow::cut);
+	this->aCopy = menuItem(editMenu, "Copy", "Ctrl+C", QIcon(), &MainWindow::copy);
+	this->aPaste = menuItem(editMenu, "Paste", "Ctrl+V", QIcon(), &MainWindow::paste);
     editMenu->addSeparator();
-    this->aSelectAll = menuItem(editMenu, "Select All", "Ctrl+A", &MainWindow::selectAll);
+	this->aSelectAll = menuItem(editMenu, "Select All", "Ctrl+A", QIcon(), &MainWindow::selectAll);
 
     QMenu *toolsMenu = menu->addMenu("&Tools");
 
-    QMenu *windowMenu = menu->addMenu("&Window");
+	QMenu *windowMenu = menu->addMenu("&Window");
+	this->aOutput = menuItem(windowMenu, "Output", "", QIcon("://Icons/appbar.console.svg"), &MainWindow::emptyAction);
+	this->aBrowser = menuItem(windowMenu, "Web Browser", "", QIcon("://Icons/appbar.globe.wire.svg"), &MainWindow::emptyAction);
+	this->aCodeJumper = menuItem(windowMenu, "Code Jumper", "", QIcon(), &MainWindow::emptyAction);
 
     QMenu *helpMenu = menu->addMenu("&Help");
 }
@@ -289,16 +303,16 @@ void MainWindow::initToolBar()
 {
     {
         auto *bar = this->addToolBar("File Control");
-        bar->addAction("New");
-        bar->addAction("Open...");
-        bar->addAction("Save");
+		menuItem(bar, "New", "", QIcon("://Icons/appbar.page.new.svg"), &MainWindow::newFile);
+		menuItem(bar, "Open...", "", QIcon("://Icons/appbar.folder.open.svg"), &MainWindow::loadFile);
+		menuItem(bar, "Save", "", QIcon("://Icons/appbar.save.svg"), &MainWindow::saveFile);
         bar->addAction("Save All");
-        bar->addAction("Close");
+		menuItem(bar, "Close", "", QIcon("://Icons/appbar.close.svg"), &MainWindow::closeFile);
     }
     {
         auto *bar = this->addToolBar("Editor Primitives");
-        bar->addAction("Undo");
-        bar->addAction("Redo");
+		menuItem(bar, "Undo", "", QIcon("://Icons/appbar.undo.svg"), &MainWindow::undo);
+		menuItem(bar, "Redo", "", QIcon("://Icons/appbar.redo.svg"), &MainWindow::redo);
         bar->addSeparator();
         bar->addAction("Cut");
         bar->addAction("Copy");
@@ -315,17 +329,33 @@ void MainWindow::initToolBar()
             box->addItem("SolidMarkup");
             bar->addWidget(box);
         }
-        bar->addAction("Settings");
+		menuItem(bar, "Language Settings", "", QIcon("://Icons/appbar.settings.svg"), &MainWindow::emptyAction);
     }
     {
         auto *bar = this->addToolBar("Search");
         {
-            auto *edit = new QLineEdit();
-            edit->setPlaceholderText("Search...");
-            edit->setMaximumWidth(200);
-            bar->addWidget(edit);
-        }
-        bar->addAction("Find");
-        bar->addAction("Find Web");
+			this->mSearchField = new QLineEdit();
+			this->mSearchField->setPlaceholderText("Search...");
+			this->mSearchField->setMaximumWidth(200);
+
+			auto *shortcut = new QShortcut(QKeySequence("Ctrl+F"), this);
+			QObject::connect(
+				shortcut, &QShortcut::activated,
+				[this]() { this->mSearchField->setFocus(); });
+
+			shortcut = new QShortcut(QKeySequence("Alt+Return"), this->mSearchField);
+			QObject::connect(
+				shortcut, &QShortcut::activated,
+				this, &MainWindow::searchWeb);
+
+			shortcut = new QShortcut(QKeySequence("Return"), this->mSearchField);
+			QObject::connect(
+				shortcut, &QShortcut::activated,
+				this, &MainWindow::search);
+
+			bar->addWidget(this->mSearchField);
+		}
+		menuItem(bar, "Find", "", QIcon("://Icons/appbar.page.search.svg"), &MainWindow::search);
+		menuItem(bar, "Find in Web", "", QIcon("://Icons/appbar.globe.wire.svg"), &MainWindow::searchWeb);
     }
 }

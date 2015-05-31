@@ -5,9 +5,9 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT		 += webkitwidgets
 
 CONFIG += c++11
-CONFIG += webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -23,17 +23,20 @@ SOURCES += main.cpp\
     codeeditor.cpp \
     language.cpp \
     Languages/simplelanghighlighter.cpp \
-    Languages/simplelanguage.cpp
+    Languages/simplelanguage.cpp \
+    webbrowser.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
     language.h \
     Languages/simplelanghighlighter.h \
-    Languages/simplelanguage.h
+    Languages/simplelanguage.h \
+    webbrowser.hpp
 
 FORMS    +=
 
 DISTFILES += \
     plan.txt
 
-QMAKE_CXXFLAGS += /FS
+RESOURCES += \
+    icons.qrc

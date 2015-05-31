@@ -5,9 +5,11 @@
 #include <QTextEdit>
 #include <QTreeView>
 #include <QMdiArea>
+#include <QDockWidget>
 
 #include "codeeditor.h"
 #include "language.h"
+#include "webbrowser.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -39,24 +41,33 @@ private:
 
     void emptyAction();
 
+	void focusSearch();
+	void search();
+	void searchWeb();
+
     CodeEditor *newEditor();
 
     CodeEditor *currentEditor();
 
-    template<typename T, typename R, typename... Args>
+	template<typename T, typename R>
     QAction *menuItem(
-            QMenu *menu,
+			T *menu,
             const QString &title,
             const QString &hotkey,
-            R(T::*fn)(Args...));
+			const QIcon &icon,
+			const R &fn);
 private:
     QFont mEditorFont;
     QMdiArea *mMdi;
     QTreeView *mCodeNavigator;
     Language *mLanguage;
+	QLineEdit *mSearchField;
+	WebBrowser *mBrowser;
+	QDockWidget *mDockBrowser, *mDockJumper, *mDockOutput;
 
     QAction *aSave, *aSaveAs, *aClose;
     QAction *aRedo, *aUndo, *aCopy, *aCut, *aPaste, *aSelectAll;
+	QAction *aCodeJumper, *aBrowser, *aOutput;
 };
 
 #endif // MAINWINDOW_H
