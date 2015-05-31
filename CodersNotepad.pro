@@ -7,12 +7,16 @@
 QT       += core gui
 
 CONFIG += c++11
+CONFIG += webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = CodersNotepad
 TEMPLATE = app
 
+webkitwidgets {
+    DEFINES += HAS_WEBBROWSER
+}
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -31,3 +35,5 @@ FORMS    +=
 
 DISTFILES += \
     plan.txt
+
+QMAKE_CXXFLAGS += /FS

@@ -18,6 +18,8 @@ public:
 
 private:
     void initMenuBar();
+    void initPanels();
+    void initToolBar();
 
     void newFile();
     void loadFile();
@@ -25,7 +27,17 @@ private:
     void saveFile();
     void saveFileAs();
 
+    void undo();
+    void redo();
+    void copy();
+    void cut();
+    void paste();
+    void selectAll();
+
     void updateFileMenu();
+    void updateEditMenu();
+
+    void emptyAction();
 
     CodeEditor *newEditor();
 
@@ -44,6 +56,7 @@ private:
     Language *mLanguage;
 
     QAction *aSave, *aSaveAs, *aClose;
+    QAction *aRedo, *aUndo, *aCopy, *aCut, *aPaste, *aSelectAll;
 };
 
 #endif // MAINWINDOW_H

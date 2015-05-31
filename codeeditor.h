@@ -1,12 +1,13 @@
 #ifndef CODEEDITOR_H
 #define CODEEDITOR_H
 
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QFileInfo>
 
 #include "language.h"
 
-class CodeEditor : public QTextEdit
+class CodeEditor :
+        public QPlainTextEdit
 {
     Q_OBJECT
 public:

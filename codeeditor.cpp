@@ -12,7 +12,7 @@
 #include <QTextStream>
 
 CodeEditor::CodeEditor(QWidget *parent) :
-    QTextEdit(parent),
+    QPlainTextEdit(parent),
     mDirty(false),
     mLanguage(nullptr),
     mHighlighter(nullptr),
@@ -132,7 +132,7 @@ void CodeEditor::focusInEvent(QFocusEvent *e)
 {
     if (this->mLanguage != nullptr)
         this->mCompleter->setWidget(this);
-    QTextEdit::focusInEvent(e);
+    QPlainTextEdit::focusInEvent(e);
 }
 
 void CodeEditor::keyPressEvent(QKeyEvent *e)
@@ -158,7 +158,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 
     bool isShortcut = ((e->modifiers() & Qt::ControlModifier) && e->key() == Qt::Key_Space); // CTRL+E
     if (!c || !isShortcut) // do not process the shortcut when we have a completer
-        QTextEdit::keyPressEvent(e);
+        QPlainTextEdit::keyPressEvent(e);
 
     const bool ctrlOrShift = e->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
     if (!c || (ctrlOrShift && e->text().isEmpty()))
