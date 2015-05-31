@@ -23,12 +23,14 @@ private:
     void initPanels();
     void initToolBar();
 
+	// File
     void newFile();
     void loadFile();
     void closeFile();
     void saveFile();
     void saveFileAs();
 
+	// Edit
     void undo();
     void redo();
     void copy();
@@ -36,8 +38,14 @@ private:
     void paste();
     void selectAll();
 
+	// Window
+	void toggleOutput();
+	void toggleWebBrowser();
+	void toggleCodeJumper();
+
     void updateFileMenu();
     void updateEditMenu();
+	void updateWindowMenu();
 
     void emptyAction();
 

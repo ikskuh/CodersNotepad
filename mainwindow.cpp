@@ -173,6 +173,25 @@ void MainWindow::searchWeb()
 	this->mBrowser->search(this->mSearchField->text());
 }
 
+
+void MainWindow::toggleOutput()
+{
+	this->mDockOutput->setVisible(!this->mDockOutput->isVisible());
+	this->aOutput->setChecked(this->mDockOutput->isVisible());
+}
+
+void MainWindow::toggleWebBrowser()
+{
+	this->mDockBrowser->setVisible(!this->mDockBrowser->isVisible());
+	this->aBrowser->setChecked(this->mDockBrowser->isVisible());
+}
+
+void MainWindow::toggleCodeJumper()
+{
+	this->mDockJumper->setVisible(!this->mDockJumper->isVisible());
+	this->aCodeJumper->setChecked(this->mDockJumper->isVisible());
+}
+
 void MainWindow::initPanels()
 {
     // Code Jumper
@@ -271,9 +290,15 @@ void MainWindow::initMenuBar()
     QMenu *toolsMenu = menu->addMenu("&Tools");
 
 	QMenu *windowMenu = menu->addMenu("&Window");
-	this->aOutput = menuItem(windowMenu, "Output", "", QIcon("://Icons/appbar.console.svg"), &MainWindow::emptyAction);
-	this->aBrowser = menuItem(windowMenu, "Web Browser", "", QIcon("://Icons/appbar.globe.wire.svg"), &MainWindow::emptyAction);
-	this->aCodeJumper = menuItem(windowMenu, "Code Jumper", "", QIcon(), &MainWindow::emptyAction);
+	connect(
+		windowMenu, &QMenu::aboutToShow,
+		this, &MainWindow::updateWindowMenu);
+	this->aOutput = menuItem(windowMenu, "Output", "", QIcon("://Icons/appbar.console.svg"), &MainWindow::toggleOutput);
+	this->aOutput->setCheckable(true);
+	this->aBrowser = menuItem(windowMenu, "Web Browser", "", QIcon("://Icons/appbar.globe.wire.svg"), &MainWindow::toggleWebBrowser);
+	this->aBrowser->setCheckable(true);
+	this->aCodeJumper = menuItem(windowMenu, "Code Jumper", "", QIcon(), &MainWindow::toggleCodeJumper);
+	this->aCodeJumper->setCheckable(true);
 
     QMenu *helpMenu = menu->addMenu("&Help");
 }
@@ -297,6 +322,13 @@ void MainWindow::updateEditMenu()
     this->aCopy->setEnabled((editor != nullptr) && (editor->textCursor().hasSelection()));
     this->aPaste->setEnabled((editor != nullptr) && (editor->canPaste()));
     this->aSelectAll->setEnabled(editor != nullptr);
+}
+
+void MainWindow::updateWindowMenu()
+{
+	this->aBrowser->setChecked(this->mDockBrowser->isVisible());
+	this->aOutput->setChecked(this->mDockOutput->isVisible());
+	this->aCodeJumper->setChecked(this->mDockJumper->isVisible());
 }
 
 void MainWindow::initToolBar()
