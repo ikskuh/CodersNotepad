@@ -2,3 +2,22 @@
 Language Prototype Requirement:
     Auto Completion [ Words / Grammar(?) ]
     Highlighting Information
+
+
+TODO:
+	Line Numbers
+	Search
+		-Find-
+		Find Regex
+		Find (Regex) in Files
+	Tools
+	Options-Menu
+		Editor
+		Tools
+		Languages
+	Code Jumper/Lister
+		Analyze Code
+	Auto Indent
+	Better Editor
+		Script Indentation by Tab
+		Auto-Indent by current indent

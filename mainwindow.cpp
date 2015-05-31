@@ -164,7 +164,10 @@ void MainWindow::redo()
 
 void MainWindow::search()
 {
-	QMessageBox(QMessageBox::Information, this->windowTitle(), "'Search' not implemented yet").exec();
+	auto *editor = this->currentEditor();
+	if(editor == nullptr)
+		return;
+	editor->search(this->mSearchField->text());
 }
 
 void MainWindow::searchWeb()
@@ -373,7 +376,10 @@ void MainWindow::initToolBar()
 			auto *shortcut = new QShortcut(QKeySequence("Ctrl+F"), this);
 			QObject::connect(
 				shortcut, &QShortcut::activated,
-				[this]() { this->mSearchField->setFocus(); });
+				[this]() {
+					this->mSearchField->setFocus();
+					this->mSearchField->setText("");
+				});
 
 			shortcut = new QShortcut(QKeySequence("Alt+Return"), this->mSearchField);
 			QObject::connect(
@@ -384,6 +390,15 @@ void MainWindow::initToolBar()
 			QObject::connect(
 				shortcut, &QShortcut::activated,
 				this, &MainWindow::search);
+
+			shortcut = new QShortcut(QKeySequence("Escape"), this->mSearchField);
+			QObject::connect(
+				shortcut, &QShortcut::activated,
+				[this]() {
+					auto editor = this->currentEditor();
+					if(editor != nullptr)
+						editor->setFocus();
+				});
 
 			bar->addWidget(this->mSearchField);
 		}

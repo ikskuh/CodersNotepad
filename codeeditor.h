@@ -37,6 +37,10 @@ public:
         return this->mDirty;
     }
 
+	void search(const QString &str);
+
+	void searchNext();
+
 protected:
     void focusInEvent(QFocusEvent *e) override;
 
@@ -54,6 +58,7 @@ signals:
 public slots:
 private:
     bool mDirty;
+	QString mLastSearch;
     QString mFileName;
     Language *mLanguage;
     QSyntaxHighlighter *mHighlighter;

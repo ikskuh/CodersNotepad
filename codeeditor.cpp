@@ -12,8 +12,9 @@
 #include <QTextStream>
 
 CodeEditor::CodeEditor(QWidget *parent) :
-    QPlainTextEdit(parent),
+	QPlainTextEdit(parent),
     mDirty(false),
+	mLastSearch(""),
     mLanguage(nullptr),
     mHighlighter(nullptr),
     mCompleter(nullptr)
@@ -182,4 +183,26 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
     cr.setWidth(c->popup()->sizeHintForColumn(0)
                 + c->popup()->verticalScrollBar()->sizeHint().width());
     c->complete(cr); // popup it up!
+}
+
+
+
+void CodeEditor::search(const QString &str)
+{
+	this->mLastSearch = str;
+	if(this->find(str) == false) {
+		auto focus = QApplication::focusWidget();
+		auto cursor = this->textCursor();
+		cursor.setPosition(0, QTextCursor::MoveAnchor);
+		this->setTextCursor(cursor);
+		this->find(str);
+
+		if(focus != nullptr)
+			focus->setFocus();
+	}
+}
+
+void CodeEditor::searchNext()
+{
+	this->search(mLastSearch);
 }
