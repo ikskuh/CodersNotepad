@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language name="Lua" extension="*.lua">
+	<format type="keywords" weight="bold" foreground="#000088">
+		local function return end
+		while repeat for in until do
+		if then else elseif
+	</format>
+	<format type="keywords" weight="bold">
+		true false nil
+	</format>
+	<format foreground="#0000FF">\b[A-Za-z_][A-Za-z0-9_]+\s*(?=\()</format>
+	<format minimal="true" foreground="#008800">".*"</format>
+	<format italic="true" foreground="#008800">--.*$</format>
+	<block start="--\[\[" end="\]\]" foreground="#008800" />
+</language>

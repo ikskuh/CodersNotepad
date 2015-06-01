@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT		 += webkitwidgets
+QT		 += webkitwidgets xml
 
 CONFIG += c++11
 
@@ -22,21 +22,23 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     codeeditor.cpp \
     language.cpp \
-    Languages/simplelanguage.cpp \
     webbrowser.cpp \
-    generichighlighter.cpp
+    generichighlighter.cpp \
+    genericlanguage.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
     language.h \
-    Languages/simplelanguage.h \
     webbrowser.hpp \
-    generichighlighter.hpp
+    generichighlighter.hpp \
+    genericlanguage.hpp
 
 FORMS    +=
 
 DISTFILES += \
-    plan.txt
+    plan.txt \
+	Languages/cpp.xml \
+    Languages/lua.xml
 
 RESOURCES += \
     icons.qrc

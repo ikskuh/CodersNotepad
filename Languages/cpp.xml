@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language name="C/C++" extension="*.c;*.h;*.cpp;*.hpp;*.c++;*.h++;*.cxx;*.hxx">
+	<format type="keywords" weight="bold" foreground="#000088">
+		char class const double float enum explicit
+		friend inline int long namespace operator private
+		protected public short signed unsigned slots static
+		struct template typedef typename union this virtual
+		override void volatile noexcept this
+	</format>
+	<format foreground="#000088">^#.*$</format>
+	<format foreground="#0000FF">\b[A-Za-z_][A-Za-z0-9_]+\s*(?=\()</format>
+	<format foreground="#880088">\bQ[A-Za-z]+\b</format>
+	<format minimal="true" foreground="#008800">".*"</format>
+	<format italic="true" foreground="#008800">//.*$</format>
+	<block start="/\*" end="\*/" foreground="#008800" />
+</language>

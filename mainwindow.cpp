@@ -14,7 +14,7 @@
 #include <QMessageBox>
 #include <QShortcut>
 
-#include "Languages/simplelanguage.h"
+#include "genericlanguage.hpp"
 
 #include "webbrowser.hpp"
 
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->mMdi->setTabsClosable(true);
     this->setCentralWidget(this->mMdi);
 
-	this->mLanguage = new SimpleLanguage();
+	this->mLanguage = GenericLanguage::load("Languages/lua.xml");
 }
 
 MainWindow::~MainWindow()
@@ -377,12 +377,12 @@ void MainWindow::initToolBar()
     {
         auto *bar = this->addToolBar("Language Options");
         {
-            auto *box = new QComboBox();
-            box->addItem("C/C++");
-            box->addItem("C#");
-            box->addItem("Lua");
-            box->addItem("Vala");
-            box->addItem("SolidMarkup");
+			auto *box = new QComboBox();
+			box->addItem("C/C++");
+			box->addItem("C#");
+			box->addItem("Lua");
+			box->addItem("Vala");
+			box->addItem("SolidMarkup");
             bar->addWidget(box);
         }
 		menuItem(bar, "Language Settings", "", QIcon("://Icons/appbar.settings.svg"), &MainWindow::emptyAction);

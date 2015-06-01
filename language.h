@@ -26,6 +26,19 @@ public:
 	 * @return
 	 */
 	virtual QCompleter *createCompleter(QTextDocument *document) const = 0;
+
+	/**
+	 * @brief Is the given file name a file of the language?
+	 * @param fileName
+	 * @return
+	 */
+	virtual bool isFileOfLanguage(const QString &fileName) const = 0;
+
+	/**
+	 * @brief Gets the name of the language.
+	 * @return
+	 */
+	virtual QString name() const = 0;
 signals:
 
 public slots:

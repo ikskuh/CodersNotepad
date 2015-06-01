@@ -6,8 +6,6 @@ GenericHighlighter::GenericHighlighter(QTextDocument *document) :
 
 }
 
-
-
 void GenericHighlighter::addRule(const QRegExp &regex, const QTextCharFormat &format)
 {
 	this->mRules.append({ regex, format });
@@ -21,7 +19,7 @@ void GenericHighlighter::addBlockRule(const QRegExp &expStart, const QRegExp &ex
 void GenericHighlighter::highlightBlock(const QString &text)
 {
 	for(const HighlightingRule &rule : this->mRules)
-	{
+{
 		QRegExp expression(rule.pattern);
 		int index = expression.indexIn(text);
 		while (index >= 0)
@@ -63,3 +61,36 @@ void GenericHighlighter::highlightBlock(const QString &text)
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

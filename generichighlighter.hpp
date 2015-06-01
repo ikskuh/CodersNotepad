@@ -10,7 +10,7 @@ class GenericHighlighter :
 		public QSyntaxHighlighter
 {
 	Q_OBJECT
-private:
+public:
 	struct HighlightingRule
 	{
 		QRegExp pattern;
@@ -22,19 +22,19 @@ private:
 		QRegExp patternEnd;
 		QTextCharFormat format;
 	};
-
+private:
 	QVector<HighlightingRule> mRules;
 	QVector<BlockHighlightingRule> mBlockRules;
-
 public:
 	explicit GenericHighlighter(QTextDocument *document = nullptr);
 protected:
 	void highlightBlock(const QString &text) override;
 public:
-
 	void addRule(const QRegExp &regex, const QTextCharFormat &format);
 
 	void addBlockRule(const QRegExp &expStart, const QRegExp &expEnd, const QTextCharFormat &format);
+
+	static GenericHighlighter *load(const QString &);
 
 signals:
 
