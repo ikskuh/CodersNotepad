@@ -14,8 +14,18 @@ class Language : public QObject
 protected:
     explicit Language(QObject *parent = 0);
 public:
+	/**
+	 * @brief Creates a syntax highlighter for the language.
+	 * @return
+	 */
     virtual QSyntaxHighlighter *createSyntaxHighlighter() const = 0;
-    virtual QCompleter *createCompleter() const = 0;
+
+	/**
+	 * @brief Creates a QCompleter for a given QTextDocument.
+	 * @param document The document that should provide completion information for the completer.
+	 * @return
+	 */
+	virtual QCompleter *createCompleter(QTextDocument *document) const = 0;
 signals:
 
 public slots:

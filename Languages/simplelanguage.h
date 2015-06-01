@@ -13,7 +13,11 @@ public:
 
     virtual QSyntaxHighlighter *createSyntaxHighlighter() const override;
 
-    virtual QCompleter *createCompleter() const override;
+	virtual QCompleter *createCompleter(QTextDocument *) const override;
+
+private:
+	QStringList mKeywords;
+	QTextCharFormat mKeywordFormat, mQtFormat, mCommentFormat, mStringFormat, mFunctionFormat, mPreprocessorFormat;
 };
 
 #endif // SIMPLELANGUAGE_H

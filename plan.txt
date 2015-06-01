@@ -8,6 +8,7 @@ TODO:
 	Line Numbers
 	Search
 		-Find-
+		-Navigate To Site-
 		Find Regex
 		Find (Regex) in Files
 	Tools

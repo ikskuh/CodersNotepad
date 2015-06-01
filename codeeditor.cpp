@@ -96,7 +96,7 @@ void CodeEditor::setLanguage(Language *language)
     if (this->mLanguage == nullptr)
         return;
 
-    this->mCompleter = this->mLanguage->createCompleter();
+	this->mCompleter = this->mLanguage->createCompleter(this->document());
     this->mCompleter->setParent(this);
     this->mCompleter->setWidget(this);
     this->mCompleter->setCompletionMode(QCompleter::PopupCompletion);

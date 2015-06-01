@@ -128,18 +128,24 @@ void MainWindow::saveFileAs()
 void MainWindow::copy()
 {
     auto *editor = this->currentEditor();
+	if(editor == nullptr)
+		return;
     editor->copy();
 }
 
 void MainWindow::cut()
 {
     auto *editor = this->currentEditor();
-    editor->cut();
+	if(editor == nullptr)
+		return;
+	editor->cut();
 }
 
 void MainWindow::paste()
 {
     auto *editor = this->currentEditor();
+	if(editor == nullptr)
+		return;
     editor->paste();
 }
 
@@ -147,18 +153,24 @@ void MainWindow::paste()
 void MainWindow::selectAll()
 {
     auto *editor = this->currentEditor();
+	if(editor == nullptr)
+		return;
     editor->selectAll();
 }
 
 void MainWindow::undo()
 {
     auto *editor = this->currentEditor();
+	if(editor == nullptr)
+		return;
     editor->undo();
 }
 
 void MainWindow::redo()
 {
     auto *editor = this->currentEditor();
+	if(editor == nullptr)
+		return;
     editor->redo();
 }
 

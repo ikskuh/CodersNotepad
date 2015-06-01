@@ -22,16 +22,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     codeeditor.cpp \
     language.cpp \
-    Languages/simplelanghighlighter.cpp \
     Languages/simplelanguage.cpp \
-    webbrowser.cpp
+    webbrowser.cpp \
+    generichighlighter.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
     language.h \
-    Languages/simplelanghighlighter.h \
     Languages/simplelanguage.h \
-    webbrowser.hpp
+    webbrowser.hpp \
+    generichighlighter.hpp
 
 FORMS    +=
 
