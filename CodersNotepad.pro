@@ -24,21 +24,24 @@ SOURCES += main.cpp\
     language.cpp \
     webbrowser.cpp \
     generichighlighter.cpp \
-    genericlanguage.cpp
+    genericlanguage.cpp \
+    tool.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
     language.h \
     webbrowser.hpp \
     generichighlighter.hpp \
-    genericlanguage.hpp
+    genericlanguage.hpp \
+    tool.h
 
 FORMS    +=
 
 DISTFILES += \
     plan.txt \
 	Languages/cpp.xml \
-    Languages/lua.xml
+    Languages/lua.xml \
+    Tools/lua.xml
 
 RESOURCES += \
     icons.qrc

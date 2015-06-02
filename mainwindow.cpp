@@ -15,13 +15,26 @@
 #include <QShortcut>
 
 #include "genericlanguage.hpp"
-
+#include "tool.h"
 #include "webbrowser.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    mEditorFont("Monospace")
+    mEditorFont("Monospace"),
+    mTools(),
+    mLanguages(),
+    mMdi(nullptr)
 {
+    this->mLanguages.append(GenericLanguage::load("Languages/lua.xml"));
+    this->mLanguages.append(GenericLanguage::load("Languages/cpp.xml"));
+
+    this->mTools.append(Tool::load("Tools/lua.xml"));
+
+    for(Tool *tool : this->mTools)
+    {
+        connect(tool, &Tool::outputEmitted, this, &MainWindow::writeOutput);
+    }
+
     this->mEditorFont.setStyleHint(QFont::TypeWriter);
     this->initMenuBar();
     this->initPanels();
@@ -31,9 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->mMdi->setViewMode(QMdiArea::TabbedView);
     //this->mMdi->setDocumentMode(true);
     this->mMdi->setTabsClosable(true);
+    connect(this->mMdi, &QMdiArea::subWindowActivated, this, &MainWindow::editorSelected);
     this->setCentralWidget(this->mMdi);
-
-	this->mLanguage = GenericLanguage::load("Languages/lua.xml");
 }
 
 MainWindow::~MainWindow()
@@ -41,9 +53,47 @@ MainWindow::~MainWindow()
 
 }
 
+void MainWindow::writeOutput(QString output)
+{
+    if(this->mOutputField != nullptr)
+        this->mOutputField->appendPlainText(output);
+}
+
+void MainWindow::editorSelected(QMdiSubWindow*)
+{
+    auto *editor = this->currentEditor();
+    if(editor == nullptr) {
+        return;
+    }
+
+    // TODO: Replace with item model
+    if(editor->language() != nullptr)
+    {
+        for(int i = 0; i < this->mEditorLanguage->count(); i++)
+        {
+            if(this->mEditorLanguage->itemText(i) == editor->language()->name())
+                this->mEditorLanguage->setCurrentIndex(i);
+        }
+    }
+}
+
+void MainWindow::languageSelected(int idx)
+{
+    auto *editor = this->currentEditor();
+    if(editor == nullptr) {
+        return;
+    }
+    Language *lng = this->mEditorLanguage->itemData(idx).value<Language*>();
+    editor->setLanguage(lng);
+
+    qDebug() << editor->fileName() << "->" << lng->name();
+}
 
 CodeEditor *MainWindow::currentEditor()
 {
+    if(this->mMdi == nullptr) {
+        return nullptr;
+    }
     auto *window = this->mMdi->currentSubWindow();
     if(window == nullptr)
         return nullptr;
@@ -55,7 +105,7 @@ CodeEditor *MainWindow::newEditor()
     auto *editor = new CodeEditor();
     editor->setFont(this->mEditorFont);
     editor->setTabStopWidth(20);
-    editor->setLanguage(this->mLanguage);
+    editor->setLanguage(this->mLanguages.first());
 
     auto *window = this->mMdi->addSubWindow(editor);
     window->setAttribute(Qt::WA_DeleteOnClose);
@@ -198,6 +248,13 @@ void MainWindow::searchWeb()
 }
 
 
+void MainWindow::startTool(Tool *tool)
+{
+    auto *editor = this->currentEditor();
+    if(editor != nullptr)
+        tool->start(editor);
+}
+
 void MainWindow::toggleOutput()
 {
 	this->mDockOutput->setVisible(!this->mDockOutput->isVisible());
@@ -244,11 +301,10 @@ void MainWindow::initPanels()
 		this->mDockOutput->setWindowTitle("Output");
 		this->mDockOutput->setWindowIcon(QIcon("://Icons/appbar.console.svg"));
 
-        auto *output = new QTextEdit();
-        output->setReadOnly(true);
-        output->setText(">cat data.dat");
+        this->mOutputField = new QPlainTextEdit();
+        this->mOutputField->setReadOnly(true);
 
-		this->mDockOutput->setWidget(output);
+        this->mDockOutput->setWidget(this->mOutputField);
 
 		this->addDockWidget(Qt::BottomDockWidgetArea, this->mDockOutput);
     }
@@ -311,7 +367,10 @@ void MainWindow::initMenuBar()
     editMenu->addSeparator();
 	this->aSelectAll = menuItem(editMenu, "Select All", "Ctrl+A", QIcon(), &MainWindow::selectAll);
 
-    QMenu *toolsMenu = menu->addMenu("&Tools");
+    this->mToolsMenu = menu->addMenu("&Tools");
+    connect(
+        this->mToolsMenu, &QMenu::aboutToShow,
+        this, &MainWindow::updateToolsMenu);
 
 	QMenu *windowMenu = menu->addMenu("&Window");
 	connect(
@@ -355,6 +414,24 @@ void MainWindow::updateWindowMenu()
 	this->aCodeJumper->setChecked(this->mDockJumper->isVisible());
 }
 
+void MainWindow::updateToolsMenu()
+{
+    auto *editor = this->currentEditor();
+    this->mToolsMenu->clear();
+    for(Tool *tool : this->mTools)
+    {
+        if(tool->accepts((editor != nullptr) ? editor->language() : nullptr) == false)
+        {
+            continue;
+        }
+        auto *action = this->mToolsMenu->addAction(tool->name());
+        action->setEnabled(editor != nullptr);
+        connect(action, &QAction::triggered, [this,tool]() {
+            this->startTool(tool);
+        });
+    }
+}
+
 void MainWindow::initToolBar()
 {
     {
@@ -377,13 +454,15 @@ void MainWindow::initToolBar()
     {
         auto *bar = this->addToolBar("Language Options");
         {
-			auto *box = new QComboBox();
-			box->addItem("C/C++");
-			box->addItem("C#");
-			box->addItem("Lua");
-			box->addItem("Vala");
-			box->addItem("SolidMarkup");
-            bar->addWidget(box);
+            this->mEditorLanguage = new QComboBox();
+            connect(
+                this->mEditorLanguage, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(languageSelected(int)));
+            for(Language *lng : this->mLanguages)
+            {
+                this->mEditorLanguage->addItem(lng->name(), QVariant::fromValue(lng));
+            }
+            bar->addWidget(this->mEditorLanguage);
         }
 		menuItem(bar, "Language Settings", "", QIcon("://Icons/appbar.settings.svg"), &MainWindow::emptyAction);
     }

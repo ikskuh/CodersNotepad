@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<language name="Lua" extension="*.lua">
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<language id="lua" name="Lua" extension="*.lua">
 	<format type="keywords" weight="bold" foreground="#000088">
-		local function return end
-		while repeat for in until do
-		if then else elseif
+		and       break     do        else      elseif    end
+		false     for       function  goto      if        in
+		local     nil       not       or        repeat    return
+		then      true      until     while
 	</format>
 	<format type="keywords" weight="bold">
 		true false nil

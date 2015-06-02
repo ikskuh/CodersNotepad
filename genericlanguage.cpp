@@ -4,8 +4,8 @@
 #include "genericlanguage.hpp"
 #include "generichighlighter.hpp"
 
-GenericLanguage::GenericLanguage(QObject *parent) :
-	Language(parent)
+GenericLanguage::GenericLanguage(QString id, QObject *parent) :
+    Language(id, parent)
 {
 
 }
@@ -74,7 +74,7 @@ GenericLanguage *GenericLanguage::load(const QString &fileName)
 
 	qDebug() << "Load language" << root.attribute("name");
 
-	auto *language = new GenericLanguage();
+    auto *language = new GenericLanguage(root.attribute("id"));
 	language->mName = root.attribute("name");
 	language->mExtensions = QRegExp(root.attribute("extension"), Qt::CaseInsensitive, QRegExp::WildcardUnix);
 

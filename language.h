@@ -12,7 +12,7 @@ class Language : public QObject
 {
     Q_OBJECT
 protected:
-    explicit Language(QObject *parent = 0);
+    explicit Language(QString id, QObject *parent = 0);
 public:
 	/**
 	 * @brief Creates a syntax highlighter for the language.
@@ -39,9 +39,16 @@ public:
 	 * @return
 	 */
 	virtual QString name() const = 0;
+
+    QString id() const
+    {
+        return this->mId;
+    }
 signals:
 
 public slots:
+private:
+    QString mId;
 };
 
 #endif // LANGUAGE_H

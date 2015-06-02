@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tool name="Lua (x86)" languages="lua">
+	<filename>C:\Program Files\lua-5.3_Win64_bin\lua53.exe</filename>
+	<directory>%d</directory>
+	<arguments>%f</arguments>
+</tool>

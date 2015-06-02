@@ -5,11 +5,14 @@
 #include <QTextEdit>
 #include <QTreeView>
 #include <QMdiArea>
+#include <QList>
 #include <QDockWidget>
+#include <QComboBox>
 
 #include "codeeditor.h"
 #include "language.h"
 #include "webbrowser.hpp"
+#include "tool.h"
 
 class MainWindow : public QMainWindow
 {
@@ -18,6 +21,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void languageSelected(int);
 private:
     void initMenuBar();
     void initPanels();
@@ -45,6 +50,7 @@ private:
 
     void updateFileMenu();
     void updateEditMenu();
+    void updateToolsMenu();
 	void updateWindowMenu();
 
     void emptyAction();
@@ -52,6 +58,12 @@ private:
 	void focusSearch();
 	void search();
 	void searchWeb();
+
+    void startTool(Tool *tool);
+
+    void editorSelected(QMdiSubWindow *);
+
+    void writeOutput(QString output);
 
     CodeEditor *newEditor();
 
@@ -66,13 +78,18 @@ private:
 			const R &fn);
 private:
     QFont mEditorFont;
+    QList<Tool*> mTools;
+    QList<Language*> mLanguages;
     QMdiArea *mMdi;
     QTreeView *mCodeNavigator;
-    Language *mLanguage;
 	QLineEdit *mSearchField;
+    QComboBox *mEditorLanguage;
 	WebBrowser *mBrowser;
+    QPlainTextEdit *mOutputField;
+
 	QDockWidget *mDockBrowser, *mDockJumper, *mDockOutput;
 
+    QMenu *mToolsMenu;
     QAction *aSave, *aSaveAs, *aClose;
     QAction *aRedo, *aUndo, *aCopy, *aCut, *aPaste, *aSelectAll;
 	QAction *aCodeJumper, *aBrowser, *aOutput;

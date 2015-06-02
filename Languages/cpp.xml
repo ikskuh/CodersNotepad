@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<language name="C/C++" extension="*.c;*.h;*.cpp;*.hpp;*.c++;*.h++;*.cxx;*.hxx">
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<language id="cpp" name="C/C++" extension="*.c;*.h;*.cpp;*.hpp;*.c++;*.h++;*.cxx;*.hxx">
 	<format type="keywords" weight="bold" foreground="#000088">
 		char class const double float enum explicit
 		friend inline int long namespace operator private

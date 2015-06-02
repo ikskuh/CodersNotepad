@@ -1,6 +1,8 @@
 #include "language.h"
 
-Language::Language(QObject *parent) : QObject(parent)
+Language::Language(QString id, QObject *parent) :
+    QObject(parent),
+    mId(id)
 {
 
 }

@@ -17,7 +17,7 @@ private:
 	QVector<GenericHighlighter::HighlightingRule> mRules;
 	QVector<GenericHighlighter::BlockHighlightingRule> mBlockRules;
 public:
-	explicit GenericLanguage(QObject *parent = 0);
+    explicit GenericLanguage(QString id, QObject *parent = 0);
 
 	static GenericLanguage *load(const QString &fileName);
 
