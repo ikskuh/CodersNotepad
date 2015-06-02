@@ -108,6 +108,10 @@ Tool *Tool::load(const QString &fileName)
         {
             tool->mArguments = element.text();
         }
+        else if(element.tagName() == "shortcut")
+        {
+            tool->mSequence = QKeySequence(element.text());
+        }
         else
         {
             qDebug() << "Unknown tag:" << element.tagName();

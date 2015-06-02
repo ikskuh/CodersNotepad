@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tool name="Lua (x64)" languages="lua">
+<tool name="Gamestudio A8" languages="cpp">
 	<shortcut>Ctrl+R</shortcut>
-	<filename>C:\Program Files\lua-5.3_Win64_bin\lua53.exe</filename>
+	<filename>C:\Program Files (x86)\GStudio8\acknex.exe</filename>
 	<directory>%d</directory>
 	<arguments>%f</arguments>
 </tool>

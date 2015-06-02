@@ -72,7 +72,7 @@ GenericLanguage *GenericLanguage::load(const QString &fileName)
 	if(root.tagName() != "language")
 		return nullptr;
 
-	qDebug() << "Load language" << root.attribute("name");
+    qDebug() << "Load language" << root.attribute("id") << root.attribute("name");
 
     auto *language = new GenericLanguage(root.attribute("id"));
 	language->mName = root.attribute("name");

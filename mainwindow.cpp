@@ -25,10 +25,14 @@ MainWindow::MainWindow(QWidget *parent) :
     mLanguages(),
     mMdi(nullptr)
 {
-    this->mLanguages.append(GenericLanguage::load("Languages/lua.xml"));
-    this->mLanguages.append(GenericLanguage::load("Languages/cpp.xml"));
-
-    this->mTools.append(Tool::load("Tools/lua.xml"));
+    for(QString file : QDir("Languages").entryList(QStringList("*.xml")))
+    {
+        this->mLanguages.append(GenericLanguage::load("Languages/" + file));
+    }
+    for(QString file : QDir("Tools").entryList(QStringList("*.xml")))
+    {
+        this->mTools.append(Tool::load("Tools/" + file));
+    }
 
     for(Tool *tool : this->mTools)
     {
@@ -75,6 +79,8 @@ void MainWindow::editorSelected(QMdiSubWindow*)
                 this->mEditorLanguage->setCurrentIndex(i);
         }
     }
+
+    this->updateToolsMenu();
 }
 
 void MainWindow::languageSelected(int idx)
@@ -86,7 +92,7 @@ void MainWindow::languageSelected(int idx)
     Language *lng = this->mEditorLanguage->itemData(idx).value<Language*>();
     editor->setLanguage(lng);
 
-    qDebug() << editor->fileName() << "->" << lng->name();
+    this->updateToolsMenu();
 }
 
 CodeEditor *MainWindow::currentEditor()
@@ -128,19 +134,31 @@ void MainWindow::newFile()
 
 void MainWindow::loadFile()
 {
-    auto fileName = QFileDialog::getOpenFileName(
+    auto fileNames = QFileDialog::getOpenFileNames(
                 this,
                 "Open File",
                 ".",
-                "All Files (*)");
-    if(fileName.isNull())
-        return;
-    QFile file(fileName);
-    if(file.exists() == false)
-        return;
+                "All Files (*)",
+                nullptr);
+    for(QString fileName : fileNames)
+    {
+        if(fileName.isNull())
+            continue;
+        QFile file(fileName);
+        if(file.exists() == false)
+            continue;
 
-    auto *editor = this->newEditor();
-    editor->open(fileName);
+        Language *lng = this->mLanguages.first();
+        for(Language *l : this->mLanguages)
+        {
+            if(l->isFileOfLanguage(file.fileName()))
+                lng = l;
+        }
+
+        auto *editor = this->newEditor();
+        editor->open(fileName);
+        editor->setLanguage(lng);
+    }
 }
 
 void MainWindow::closeFile()
@@ -426,6 +444,7 @@ void MainWindow::updateToolsMenu()
         }
         auto *action = this->mToolsMenu->addAction(tool->name());
         action->setEnabled(editor != nullptr);
+        action->setShortcut(tool->sequence());
         connect(action, &QAction::triggered, [this,tool]() {
             this->startTool(tool);
         });

@@ -39,6 +39,11 @@ public:
 
     void start(CodeEditor *context);
 
+    const QKeySequence &sequence() const
+    {
+        return this->mSequence;
+    }
+
 signals:
     void outputEmitted(const QString &value);
 
@@ -50,6 +55,7 @@ private:
 
 private:
     QString mName, mFileName, mArguments, mWorkingDirectory;
+    QKeySequence mSequence;
     QRegExp mLanguages;
 };
 
