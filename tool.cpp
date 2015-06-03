@@ -17,51 +17,64 @@ Tool::Tool(const QString &name, QObject *parent) :
 
 }
 
-static QString prepare(QString str, CodeEditor *context, bool escape = true)
+extern QString osName;
+
+bool Tool::isSupported()
 {
-    QString result = str;
-    QString q = escape ? "\"" : "";
-    result = result.replace("%s", q + context->textCursor().selectedText() + q);
-    result = result.replace("%f", q + context->fileName() + q);
-    result = result.replace("%n", q + QFileInfo(context->fileName()).fileName() + q);
+	return this->mOSList.exactMatch(osName);
+}
+
+static QString prepare(QString str, CodeEditor *context)
+{
+	QString result = str;
+	result = result.replace("%s", context->textCursor().selectedText());
+	result = result.replace("%f", context->fileName());
+	result = result.replace("%n", QFileInfo(context->fileName()).fileName());
     {
         auto dir = QFileInfo(context->fileName()).absoluteDir();
         dir.cdUp();
-        result = result.replace("%d", q + dir.path() + q);
+		result = result.replace("%d", dir.path());
     }
     return result;
 }
 
+void Tool::printExitCode(int code)
+{
+	emit this->outputEmitted("Exit Code: " + QString::number(code));
+}
+
 void Tool::start(CodeEditor *context)
 {
-    qDebug() << "Start" << this->name() << "with file" << context->fileName();
-
     auto *proc = new QProcess(this);
     connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+	connect(proc, SIGNAL(finished(int)), this, SLOT(printExitCode(int)));
     connect(proc, &QProcess::readyReadStandardOutput, this, &Tool::flushOutput);
     connect(proc, &QProcess::readyReadStandardError, this, &Tool::flushError);
 
-    proc->setNativeArguments(prepare(this->mArguments, context));
-    proc->setWorkingDirectory(prepare(this->mWorkingDirectory, context, false));
-    proc->setProgram(prepare(this->mFileName, context));
+	QStringList args;
+	for(QString arg : this->mArguments)
+	{
+		args << prepare(arg, context);
+	}
 
-    qDebug() << proc->workingDirectory() << proc->program() << proc->nativeArguments();
+	proc->setArguments(args);
+	proc->setWorkingDirectory(prepare(this->mWorkingDirectory, context));
+	proc->setProgram(prepare(this->mFileName, context));
 
+	this->outputEmitted(">" + QFileInfo(proc->program()).fileName() + " " + proc->arguments().join(' '));
     proc->start();
 }
 
 void Tool::flushOutput()
 {
-    QProcess *proc = qobject_cast<QProcess*>(sender());
-    qDebug() << proc;
+	QProcess *proc = qobject_cast<QProcess*>(sender());
     emit this->outputEmitted(QString(proc->readAllStandardOutput()));
 }
 
 void Tool::flushError()
 {
-    QProcess *proc = qobject_cast<QProcess*>(sender());
-    qDebug() << proc;
-    emit this->outputEmitted(QString(proc->readAllStandardError()));
+	QProcess *proc = qobject_cast<QProcess*>(sender());
+	emit this->outputEmitted(QString(proc->readAllStandardError()));
 }
 
 Tool *Tool::load(const QString &fileName)
@@ -85,6 +98,7 @@ Tool *Tool::load(const QString &fileName)
     auto *tool = new Tool();
     tool->mName = root.attribute("name");
     tool->mLanguages = QRegExp(root.attribute("languages").split(';').join('|'));
+	tool->mOSList = QRegExp(root.attribute("os").split(';').join('|'));
     tool->mWorkingDirectory = ".";
 
     auto nodes = root.childNodes();
@@ -106,7 +120,19 @@ Tool *Tool::load(const QString &fileName)
         }
         else if(element.tagName() == "arguments")
         {
-            tool->mArguments = element.text();
+			auto children = element.childNodes();
+			for(int j = 0; j < children.count(); j++)
+			{
+				if(children.at(j).isElement() == false) {
+					continue;
+				}
+				QDomElement child = children.at(j).toElement();
+				if(child.tagName() == "arg")
+					tool->mArguments.push_back(child.text());
+				else
+					qDebug() << "Invalid argument node:" << child.tagName();
+
+			}
         }
         else if(element.tagName() == "shortcut")
         {

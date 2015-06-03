@@ -76,7 +76,10 @@ GenericLanguage *GenericLanguage::load(const QString &fileName)
 
     auto *language = new GenericLanguage(root.attribute("id"));
 	language->mName = root.attribute("name");
-	language->mExtensions = QRegExp(root.attribute("extension"), Qt::CaseInsensitive, QRegExp::WildcardUnix);
+	language->mExtensions = QRegExp(root.attribute("extension"), Qt::CaseInsensitive, QRegExp::Wildcard);
+	if(language->mExtensions.isValid() == false) {
+		qDebug() << "Invalid pattern!";
+	}
 
 	auto nodes = root.childNodes();
 	for(int i = 0; i < nodes.count(); i++)

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language id="vala" name="Vala" extension="*.vala">
+	<format type="keywords" weight="bold" foreground="#000088">
+		if else switch case default
+		do while for foreach in
+		break continue return
+		try catch finally throw
+		lock
+		class interface struct enum delegate errordomain
+		const weak unowned dynamic
+		abstract virtual override signal extern static async inline new
+		public private protected internal
+		out ref
+		throws requires ensures
+		namespace using
+		as is in new delete sizeof typeof
+		this base
+		null true false
+		get set default value
+		construct static construct
+		void var yield global owned
+	</format>
+	<format type="keywords" weight="bold" foreground="#880088">
+		char short int long
+		uchar ushort uint ulong
+		int8 int16 int32 int64
+		uint8 uint16 uint32 uint64
+		double float
+		bool unichar
+	</format>
+	<format foreground="#000088">^#.*$</format>
+	<format foreground="#0000FF">\b[A-Za-z_][A-Za-z0-9_]+\s*(?=\()</format>
+	<format minimal="true" foreground="#008800">".*"</format>
+	<format italic="true" foreground="#008800">//.*$</format>
+	<block start="/\*" end="\*/" foreground="#008800" />
+</language>

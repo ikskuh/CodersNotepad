@@ -41,7 +41,12 @@ DISTFILES += \
     plan.txt \
 	Languages/cpp.xml \
     Languages/lua.xml \
-    Tools/lua.xml
+    Tools/gamestudio.xml \
+    Tools/lua-win.xml \
+    Tools/lua-unix.xml \
+    Languages/vala.xml \
+    Tools/valac.xml \
+    Tools/vala.xml
 
 RESOURCES += \
     icons.qrc

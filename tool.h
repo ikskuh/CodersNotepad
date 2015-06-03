@@ -39,24 +39,30 @@ public:
 
     void start(CodeEditor *context);
 
+	bool isSupported();
+
     const QKeySequence &sequence() const
     {
         return this->mSequence;
-    }
+	}
 
 signals:
     void outputEmitted(const QString &value);
 
 public slots:
 
+	void printExitCode(int);
+
 private:
     void flushOutput();
     void flushError();
 
 private:
-    QString mName, mFileName, mArguments, mWorkingDirectory;
+	QString mName, mFileName, mWorkingDirectory;
+	QStringList mArguments;
     QKeySequence mSequence;
     QRegExp mLanguages;
+	QRegExp mOSList;
 };
 
 #endif // TOOL_H

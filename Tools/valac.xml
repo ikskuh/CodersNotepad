@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tool name="Vala Compiler" languages="vala" os="unix">
+	<shortcut>Ctrl+Shift+B</shortcut>
+	<filename>valac</filename>
+	<directory>%d</directory>
+	<arguments>
+		<arg>%f</arg>
+	</arguments>
+</tool>

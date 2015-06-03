@@ -65,6 +65,8 @@ private:
 
     void writeOutput(QString output);
 
+	void selectLanguage(Language *);
+
     CodeEditor *newEditor();
 
     CodeEditor *currentEditor();

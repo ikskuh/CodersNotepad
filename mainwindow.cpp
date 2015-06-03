@@ -31,7 +31,13 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     for(QString file : QDir("Tools").entryList(QStringList("*.xml")))
     {
-        this->mTools.append(Tool::load("Tools/" + file));
+		auto *tool = Tool::load("Tools/" + file);
+		if(tool->isSupported()) {
+			tool->setParent(this);
+			this->mTools.append(tool);
+		} else {
+			tool->deleteLater();
+		}
     }
 
     for(Tool *tool : this->mTools)
@@ -63,23 +69,27 @@ void MainWindow::writeOutput(QString output)
         this->mOutputField->appendPlainText(output);
 }
 
+void MainWindow::selectLanguage(Language *lng)
+{
+	if(lng == nullptr) {
+		return;
+	}
+	for(int i = 0; i < this->mEditorLanguage->count(); i++)
+	{
+		if(this->mEditorLanguage->itemData(i).value<Language*>() == lng) {
+			this->mEditorLanguage->setCurrentIndex(i);
+			return;
+		}
+	}
+}
+
 void MainWindow::editorSelected(QMdiSubWindow*)
 {
     auto *editor = this->currentEditor();
     if(editor == nullptr) {
         return;
     }
-
-    // TODO: Replace with item model
-    if(editor->language() != nullptr)
-    {
-        for(int i = 0; i < this->mEditorLanguage->count(); i++)
-        {
-            if(this->mEditorLanguage->itemText(i) == editor->language()->name())
-                this->mEditorLanguage->setCurrentIndex(i);
-        }
-    }
-
+	this->selectLanguage(editor->language());
     this->updateToolsMenu();
 }
 
@@ -154,10 +164,11 @@ void MainWindow::loadFile()
             if(l->isFileOfLanguage(file.fileName()))
                 lng = l;
         }
+		auto *editor = this->newEditor();
+		editor->open(fileName);
+		editor->setLanguage(lng);
 
-        auto *editor = this->newEditor();
-        editor->open(fileName);
-        editor->setLanguage(lng);
+		this->selectLanguage(lng);
     }
 }
 
