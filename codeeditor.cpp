@@ -157,6 +157,54 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
        }
     }
 
+	// Tab Indentation Control
+	if((e->key() == Qt::Key_Tab) || (e->key() == Qt::Key_Backtab))
+	{
+		bool moveBack = (e->key() == Qt::Key_Backtab);
+		auto cursor = this->textCursor();
+		auto *doc = this->document();
+
+		int start = cursor.selectionStart();
+		int end = cursor.selectionEnd();
+		if(end == start) {
+			QPlainTextEdit::keyPressEvent(e);
+			return;
+		}
+
+		// Find line start
+		while((start > 0) && (doc->characterAt(start - 1).toLatin1() != 0))
+		{
+			start--;
+		}
+
+		for(int pos = start; pos <= end; pos++)
+		{
+			if(moveBack == false)
+			{
+				// Insert tab at line start
+				if(doc->characterAt(pos - 1).toLatin1() == 0)
+				{
+					cursor.setPosition(pos);
+					cursor.insertText("\t");
+					end += 1;
+				}
+			}
+			else
+			{
+				// Remove tab at line start
+				if((doc->characterAt(pos - 1).toLatin1() == 0) && (doc->characterAt(pos).toLatin1() == '\t'))
+				{
+					cursor.setPosition(pos);
+					cursor.deleteChar();
+					end -= 1;
+				}
+			}
+		}
+
+		e->ignore();
+		return;
+	}
+
     bool isShortcut = ((e->modifiers() & Qt::ControlModifier) && e->key() == Qt::Key_Space); // CTRL+E
     if (!c || !isShortcut) // do not process the shortcut when we have a completer
         QPlainTextEdit::keyPressEvent(e);

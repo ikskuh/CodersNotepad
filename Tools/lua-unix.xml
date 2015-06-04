@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tool name="Lua" languages="lua" os="unix">
+<tool name="Lua" languages="lua" os="unix" save-file="true">
 	<shortcut>Ctrl+R</shortcut>
 	<filename>lua</filename>
 	<directory>%d</directory>

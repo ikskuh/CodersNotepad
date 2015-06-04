@@ -27,12 +27,18 @@ bool Tool::isSupported()
 static QString prepare(QString str, CodeEditor *context)
 {
 	QString result = str;
+	result = result.replace("%s", "%%");
 	result = result.replace("%s", context->textCursor().selectedText());
+	// TODO: Add missing placeholders
+	// %w => Current word
+	// %l => Current line
+	// %c => Current column
+	// %? => Message Box Parameter
+	// %{...} => Environment Variables, Placeholders, ...
 	result = result.replace("%f", context->fileName());
 	result = result.replace("%n", QFileInfo(context->fileName()).fileName());
     {
-        auto dir = QFileInfo(context->fileName()).absoluteDir();
-        dir.cdUp();
+		auto dir = QFileInfo(context->fileName()).absoluteDir();
 		result = result.replace("%d", dir.path());
     }
     return result;
@@ -45,6 +51,13 @@ void Tool::printExitCode(int code)
 
 void Tool::start(CodeEditor *context)
 {
+	if(this->mSaveOnRun) {
+		context->save();
+		if(context->fileName().isEmpty()) {
+			return;
+		}
+	}
+
     auto *proc = new QProcess(this);
     connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
 	connect(proc, SIGNAL(finished(int)), this, SLOT(printExitCode(int)));
@@ -99,6 +112,7 @@ Tool *Tool::load(const QString &fileName)
     tool->mName = root.attribute("name");
     tool->mLanguages = QRegExp(root.attribute("languages").split(';').join('|'));
 	tool->mOSList = QRegExp(root.attribute("os").split(';').join('|'));
+	tool->mSaveOnRun = root.attribute("save-file") == "true";
     tool->mWorkingDirectory = ".";
 
     auto nodes = root.childNodes();

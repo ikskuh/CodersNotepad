@@ -12,6 +12,7 @@ TODO:
 		Find Regex
 		Find (Regex) in Files
 	Tools
+		What's missing?
 	Options-Menu
 		Editor
 		Tools
@@ -20,5 +21,4 @@ TODO:
 		Analyze Code
 	Auto Indent
 	Better Editor
-		Script Indentation by Tab
 		Auto-Indent by current indent

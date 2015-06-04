@@ -63,6 +63,7 @@ private:
     QKeySequence mSequence;
     QRegExp mLanguages;
 	QRegExp mOSList;
+	bool mSaveOnRun;
 };
 
 #endif // TOOL_H
