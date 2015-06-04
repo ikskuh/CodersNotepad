@@ -157,6 +157,44 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
        }
     }
 
+	// Automatic Indentation
+	if(e->key() == Qt::Key_Return)
+	{
+		QPlainTextEdit::keyPressEvent(e);
+
+		auto cursor = this->textCursor();
+		auto *doc = this->document();
+		int pos = cursor.position() - 1;
+		int origin = pos;
+
+		if(pos < 0)
+			return;
+
+		// Navigate to line start
+		while((pos > 0) && (doc->characterAt(pos - 1).toLatin1() != 0))
+		{
+			pos--;
+		}
+
+		int indent = 0;
+		for(int i = pos; i <= origin; i++)
+		{
+			if(doc->characterAt(i) == '\t') {
+				indent++;
+			} else {
+				break;
+			}
+		}
+
+		// Indent if necessary
+		if(indent > 0)
+		{
+			this->textCursor().insertText(QString("\t").repeated(indent));
+		}
+
+		return;
+	}
+
 	// Tab Indentation Control
 	if((e->key() == Qt::Key_Tab) || (e->key() == Qt::Key_Backtab))
 	{
@@ -166,7 +204,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 
 		int start = cursor.selectionStart();
 		int end = cursor.selectionEnd();
-		if(end == start) {
+		if((end == start) && (moveBack == false)) {
 			QPlainTextEdit::keyPressEvent(e);
 			return;
 		}

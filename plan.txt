@@ -21,4 +21,6 @@ TODO:
 		Analyze Code
 	Auto Indent
 	Better Editor
-		Auto-Indent by current indent
+		??
+
+
