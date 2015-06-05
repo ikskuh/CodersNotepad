@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tool name="Löve2D" languages="lua" os="unix" save-file="true">
+	<shortcut>F5</shortcut>
+	<filename>love</filename>
+	<directory>%d</directory>
+	<arguments>
+		<arg>.</arg>
+	</arguments>
+</tool>

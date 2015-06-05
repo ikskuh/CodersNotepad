@@ -5,9 +5,12 @@ Language Prototype Requirement:
 
 
 TODO:
+	General
+		Ask for save on close
+	Bugs
+		Language does not get selected right on file open
+		File gets marked "dirty" on selection
 	Search
-		-Find-
-		-Navigate To Site-
 		Find Regex
 		Find (Regex) in Files
 	Tools

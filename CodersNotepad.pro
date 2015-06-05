@@ -47,7 +47,8 @@ DISTFILES += \
     Tools/lua-unix.xml \
     Languages/vala.xml \
     Tools/valac.xml \
-    Tools/vala.xml
+    Tools/vala.xml \
+    Tools/löve.xml
 
 RESOURCES += \
     icons.qrc
