@@ -6,10 +6,13 @@
 
 #include "language.h"
 
+class LineNumberArea;
+
 class CodeEditor :
         public QPlainTextEdit
 {
     Q_OBJECT
+	friend class LineNumberArea;
 public:
     explicit CodeEditor(QWidget *parent = 0);
     ~CodeEditor();
@@ -41,6 +44,10 @@ public:
 
 	void searchNext();
 
+private:
+	void lineNumberAreaPaintEvent(QPaintEvent *event);
+	int lineNumberAreaWidth();
+
 protected:
     void focusInEvent(QFocusEvent *e) override;
 
@@ -53,6 +60,14 @@ private slots:
     void makeDirty();
 
     void setDirty(bool dirty);
+
+protected:
+	void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+
+private slots:
+	void updateLineNumberAreaWidth(int newBlockCount);
+	void highlightCurrentLine();
+	void updateLineNumberArea(const QRect &, int);
 signals:
 
 public slots:
@@ -63,6 +78,7 @@ private:
     Language *mLanguage;
     QSyntaxHighlighter *mHighlighter;
     QCompleter *mCompleter;
+	QWidget *mLineNumberArea;
 };
 
 #endif // CODEEDITOR_H

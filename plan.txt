@@ -5,7 +5,6 @@ Language Prototype Requirement:
 
 
 TODO:
-	Line Numbers
 	Search
 		-Find-
 		-Navigate To Site-
@@ -19,8 +18,7 @@ TODO:
 		Languages
 	Code Jumper/Lister
 		Analyze Code
-	Auto Indent
 	Better Editor
-		??
+		Parenthesis Matching
 
 

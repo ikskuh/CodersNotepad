@@ -33,7 +33,8 @@ HEADERS  += mainwindow.h \
     webbrowser.hpp \
     generichighlighter.hpp \
     genericlanguage.hpp \
-    tool.h
+    tool.h \
+    linenumberarea.hpp
 
 FORMS    +=
 
